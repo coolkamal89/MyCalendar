@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+	<head>
+		<title>{{ pageTitle }} :: {{ appName }}</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+		<script src="lib/angular/angular.min.js"></script>
+		<script src="lib/angular/angular-route.min.js"></script>
+		<script src="lib/angular/angular-animate.min.js"></script>
+		<script src="lib/app/app.js"></script>
+		<script src="lib/app/controllers.js"></script>
+		<meta name="viewport" content="width=device-width, initial-scale=2.0" />
+		<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+		<style type="text/css">
+			.navbar-brand.active, .navbar-brand.active:hover, .navbar-brand.active:active { background-color: #e7e7e7!important; }
+			.group-list-table { margin-bottom: 0px; }
+			.group-list-table td { vertical-align: middle!important;  }
+			.group-list-table tr:hover { background-color: #f5f5f5; }
+			.group-list-table tr:first-child td { border-top: none; }
+			h2.partial-title { margin-top: 0px!important; }
+		</style>
+	</head>
+	<body>
+		<nav class="navbar navbar-default ng-hide" ng-show="showNav" ng-controller="NavBarController">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#nav-main">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" ng-class="{ active: isActive('/home') }" href="#/home"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> {{ appName }}</a>
+				</div>
+				<div id="nav-main" class="collapse navbar-collapse">
+					<ul class="nav navbar-nav">
+						<li class="dropdown" ng-class="{ active: isActive('/groups') || isActive('/group') }">
+							<a href="#/groups" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon glyphicon-th" aria-hidden="true"></span> Groups</a>
+						</li>
+						<li class="dropdown" ng-class="{ active: isActive('/dates') || isActive('/dates') }">
+							<a href="#/dates" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span> Dates</a>
+						</li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<li class="dropdown" ng-class="{ active: isActive('/settings') }">
+							<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Hi {{ userName }} <span class="caret"></span></a>
+							<ul class="dropdown-menu" role="menu">
+								<li ng-class="{ active: isActive('/settings') }"><a href="#/settings"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Settings</a></li>
+								<li class="divider"></li>
+								<li><a href="javascript:;" ng-click="Login.logout();"><span class="glyphicon glyphicon-off" aria-hidden="true"></span> Logout</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+		<div class="container">
+			<div class="main" ng-view>
+			</div>
+		</div>
+		<script type="text/javascript">
+			$(function() {
+				var navMain = $("#nav-main");
+				navMain.on("click", "a[aria-expanded!='true']", null, function () {
+					if (navMain.hasClass("in")) {
+						navMain.collapse('hide');
+					}
+				});
+			});
+		</script>
+	</body>
+</html>
