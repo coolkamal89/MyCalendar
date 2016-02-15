@@ -188,7 +188,7 @@
 		$output = $result;
 
 		$query->nextRowset();
-		$result = $query->fetch(PDO::FETCH_ASSOC);
+		$result = $query->fetchAll(PDO::FETCH_ASSOC);
 		$output['data'] = (!empty($result) ? $result : '');
 
 		$pdo = null;
