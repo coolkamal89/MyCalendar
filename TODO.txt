@@ -1,0 +1,1 @@
+The Default group and the counts should come from the database rather than PHP.
