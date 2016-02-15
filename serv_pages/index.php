@@ -31,6 +31,9 @@
 
 		case		'logout'		:	doLogout();
 										break;
+
+		case		'register'		:	doRegister();
+										break;
 		
 		default						:	out_json(['success' => false, 'message' => 'Invalid command!']);
 										break;
@@ -96,4 +99,35 @@
 		out_json($output);
 	}
 
+	/*
+	*	Function to register a user
+	*/
+	function doRegister() {
+		global $request;
+
+		if ($request['password'] !== $request['confirm_password']) {
+			out_json(['success' => false, 'data' => '', 'message' => 'Password and confirm passwords do not match!']);
+		}
+
+		$pdo = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASS);
+		$query = $pdo->prepare('CALL spRegister(:email, :password, :first_name, :last_name);');
+		$query->execute([
+			':email' => $request['email'],
+			':password' => $request['password'],
+			':first_name' => $request['first_name'],
+			':last_name' => $request['last_name']
+		]);
+		$result = $query->fetch(PDO::FETCH_ASSOC);
+		$result["status"] = ($result["status"] == "1" ? true : false);
+
+		$output = $result;
+
+		$query->nextRowset();
+		$result = $query->fetch(PDO::FETCH_ASSOC);
+		$output["data"] = (!empty($result) ? $result : '');
+
+		$pdo = null;
+
+		out_json($output);
+	}
 ?>
