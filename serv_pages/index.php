@@ -22,14 +22,18 @@
 	$request_url = explode('/', $_SERVER['PATH_INFO']);
 
 	switch (trim(strtolower($request_url[1]))) {
-		case		'login'		:	doLogin();
-									break;
 		
-		case		'logout'	:	doLogout();
-									break;
+		case		'login'			:	doLogin();
+										break;
 		
-		default					:	out_json(['success' => false, 'message' => 'Invalid Command!']);
-									break;
+		case		'checklogin'	:	doCheckLogin();
+										break;
+
+		case		'logout'		:	doLogout();
+										break;
+		
+		default						:	out_json(['success' => false, 'message' => 'Invalid command!']);
+										break;
 	}
 	
 	/*
@@ -67,6 +71,26 @@
 		$output = ['success' => false, 'data' => '', 'message' => 'Error while logging out!'];
 		if ($result) {
 			$output = ['success' => true, 'data' => '', 'message' => 'Successfully logged out!'];
+		}
+
+		out_json($output);
+	}
+
+	/*
+	*	Function to check whether the user is logged in or not
+	*/
+	function doCheckLogin() {
+		global $request;
+
+		$pdo = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASS);
+		$query = $pdo->prepare('CALL spCheckLogin(:user_id, :login_session_id);');
+		$query->execute(array(':user_id' => $request['user_id'], ':login_session_id' => $request['login_session_id']));
+		$result = $query->fetch(PDO::FETCH_ASSOC);
+		$pdo = null;
+
+		$output = ['success' => false, 'data' => '', 'message' => 'Invalid login!'];
+		if ($result) {
+			$output = ['success' => true, 'data' => $result, 'message' => 'Valid login!'];
 		}
 
 		out_json($output);
