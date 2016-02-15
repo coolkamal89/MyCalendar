@@ -16,12 +16,10 @@
 	/*
 	*	Getting the API request url and the post data
 	*/
-	$postdata = file_get_contents('php://input');
-	$request = json_decode($postdata, true);
+	$request = json_decode(file_get_contents('php://input'), true);
+	$command = explode('/', $_SERVER['PATH_INFO'])[1];
 
-	$request_url = explode('/', $_SERVER['PATH_INFO']);
-
-	switch (trim(strtolower($request_url[1]))) {
+	switch (trim(strtolower($command))) {
 		
 		case		'login'			:	doLogin();
 										break;
