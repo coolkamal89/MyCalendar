@@ -67,7 +67,7 @@
 			<form ng-submit="doEditGroup();" class="form-inline">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
-					<h4 class="modal-title">Edit Group - {{ edit_original_group_name }}</h4>
+					<h4 class="modal-title">Edit Group "{{ edit_original_group_name }}"</h4>
 				</div>
 				<div class="modal-body">
 					<div role="alert" class="alert alert-danger ng-hide" ng-show="editGroupError">
@@ -97,7 +97,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Delete Group ({{ delete_group_name }})</h4>
+				<h4 class="modal-title">Delete Group "{{ delete_group_name }}"</h4>
 			</div>
 			<div class="modal-body">
 				<input type="hidden" ng-modal="delete_group_data" />
