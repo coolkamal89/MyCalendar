@@ -55,7 +55,7 @@ CREATE TABLE `groups` (
   `group_name` varchar(45) COLLATE latin1_general_cs DEFAULT NULL,
   `created_on` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`group_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
+) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -64,6 +64,7 @@ CREATE TABLE `groups` (
 
 LOCK TABLES `groups` WRITE;
 /*!40000 ALTER TABLE `groups` DISABLE KEYS */;
+INSERT INTO `groups` VALUES (48,1,'Birthdays','2016-02-15 21:58:09'),(49,1,'Anniversaries','2016-02-15 21:58:12'),(50,1,'Health','2016-02-15 21:58:17'),(51,1,'Work','2016-02-15 21:58:18');
 /*!40000 ALTER TABLE `groups` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -93,7 +94,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'kamal','Kamal','Relwani','kamal','798366E8E9EACDB22A49','2016-02-15 18:27:43');
+INSERT INTO `users` VALUES (1,'kamal','Kamal','Relwani','kamal','C48CBEF36979832C80A7','2016-02-15 18:27:43');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -273,7 +274,8 @@ BEGIN
 	SELECT
 		g.group_id,
 		g.group_name,
-		g.created_on
+		g.created_on,
+		ROUND(RAND() * 100) AS event_count
 	FROM groups g
 		INNER JOIN users u
 	WHERE g.user_id = user_id
@@ -389,4 +391,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-02-15 21:13:21
+-- Dump completed on 2016-02-15 22:10:12
