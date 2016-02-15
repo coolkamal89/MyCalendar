@@ -93,7 +93,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'kamal','Kamal','Relwani','kamal','CD86F1B6C54981259EC9','2016-02-15 14:26:40');
+INSERT INTO `users` VALUES (1,'kamal','Kamal','Relwani','kamal','58BC3F9198904F4BAE43','2016-02-15 14:26:40');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -104,6 +104,37 @@ UNLOCK TABLES;
 --
 -- Dumping routines for database 'MyDatesDB'
 --
+/*!50003 DROP PROCEDURE IF EXISTS `spCheckLogin` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spCheckLogin`(user_id VARCHAR(45), login_session_id VARCHAR(45))
+BEGIN
+
+	IF user_id != '' AND login_session_id != '' THEN
+		SELECT
+			user_id,
+			email,
+			first_name,
+			last_name,
+			login_session_id
+		FROM users
+		WHERE users.user_id = user_id
+			AND users.login_session_id = login_session_id;
+	END IF;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `spLogin` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -172,4 +203,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-02-15 15:42:25
+-- Dump completed on 2016-02-15 16:01:36
