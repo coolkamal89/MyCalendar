@@ -1,4 +1,7 @@
 <div class="container ng-hide" style="max-width: 400px; margin-top: 50px;" ng-show="showLogin">
+	<div role="alert" class="alert alert-danger ng-hide" ng-show="loginLoadError">
+		{{ loginLoadError }}
+	</div>
 	<div class="panel panel-info">
 		<div class="panel-heading">
 			<h3 class="panel-title" style="text-align: center;"><strong>{{ appName }} - Login</strong></h3>
