@@ -1,0 +1,6 @@
+CALL spLogout('1', 'CD86F1B6C54981259EC9');
+
+SELECT * FROM MyDatesDB.users;
+
+CALL spLogout('1', 'F9F1A985F4A06EA36974');
+
