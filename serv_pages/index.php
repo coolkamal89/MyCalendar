@@ -40,6 +40,9 @@
 
 		case		'creategroup'	:	doCreateGroup();
 										break;
+
+		case		'deletegroup'	:	doDeleteGroup();
+										break;
 		
 		default						:	out_json(['success' => false, 'message' => 'Invalid command!']);
 										break;
@@ -198,6 +201,27 @@
 		$output['data'] = (!empty($result) ? $result : '');
 
 		$pdo = null;
+
+		out_json($output);
+	}
+
+	function doDeleteGroup() {
+		global $request;
+
+		$pdo = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASS);
+		$query = $pdo->prepare('CALL spDeleteGroup(:user_id, :login_session_id, :group_id);');
+		$query->execute([
+			':user_id' => $request['user_id'],
+			':login_session_id' => $request['login_session_id'],
+			':group_id' => $request['group_id']
+		]);
+		$result = $query->fetch(PDO::FETCH_ASSOC);
+		$pdo = null;
+
+		$output = ['success' => false, 'data' => '', 'message' => 'Error deleting group'];
+		if ($result) {
+			$output = ['success' => true, 'data' => '', 'message' => 'Group successfully deleted!'];
+		}
 
 		out_json($output);
 	}
