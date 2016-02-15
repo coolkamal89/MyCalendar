@@ -51,7 +51,7 @@
 		$result = $query->fetch(PDO::FETCH_ASSOC);
 		$pdo = null;
 
-		$output = ['success' => false, 'data' => '', 'message' => 'Invalid email or password!'];
+		$output = ['success' => false, 'data' => '', 'message' => 'Incorrect email or password!'];
 		if ($result) {
 			$output = ['success' => true, 'data' => $result, 'message' => ''];
 		}
