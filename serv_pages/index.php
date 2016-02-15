@@ -118,13 +118,13 @@
 			':last_name' => $request['last_name']
 		]);
 		$result = $query->fetch(PDO::FETCH_ASSOC);
-		$result["status"] = ($result["status"] == "1" ? true : false);
+		$result['success'] = ($result['success'] == '1' ? true : false);
 
 		$output = $result;
 
 		$query->nextRowset();
 		$result = $query->fetch(PDO::FETCH_ASSOC);
-		$output["data"] = (!empty($result) ? $result : '');
+		$output['data'] = (!empty($result) ? $result : '');
 
 		$pdo = null;
 
