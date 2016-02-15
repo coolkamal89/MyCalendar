@@ -41,6 +41,9 @@
 
 		case		'deletegroup'	:	doDeleteGroup();
 										break;
+
+		case		'editgroup'		:	doEditGroup();
+										break;
 		
 		default						:	out_json(['success' => false, 'message' => 'Invalid command!']);
 										break;
@@ -226,6 +229,39 @@
 		if ($result) {
 			$output = ['success' => true, 'data' => '', 'message' => 'Group successfully deleted!'];
 		}
+
+		out_json($output);
+	}
+
+	function doEditGroup() {
+		global $request;
+
+		if ($request['group_name'] == '') {
+			out_json(['success' => false, 'data' => '', 'message' => 'Please specify the group name!']);
+		}
+
+		$pdo = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASS);
+		$query = $pdo->prepare('CALL spEditGroup(:user_id, :login_session_id, :group_name);');
+		$query->execute([
+			':user_id' => $request['user_id'],
+			':login_session_id' => $request['login_session_id'],
+			':group_name' => $request['group_name']
+		]);
+		$result = $query->fetch(PDO::FETCH_ASSOC);
+		$result['success'] = ($result['success'] == '1' ? true : false);
+
+		$output = $result;
+
+		$query->nextRowset();
+		$result = $query->fetchAll(PDO::FETCH_ASSOC);
+
+		if (!empty($result)) {
+			$output['data'] =  $result;
+		} else {
+			$output['data'] = '';
+		}
+
+		$pdo = null;
 
 		out_json($output);
 	}
