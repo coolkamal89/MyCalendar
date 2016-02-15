@@ -13,7 +13,7 @@
 	*	Debugging variable
 	*/
 	// $debug = true;
-	$debug = ($_SERVER['SERVER_NAME'] == 'kamal');
+	$debug = ($_SERVER['SERVER_NAME'] === 'kamal');
 
 	/*
 	*	Enable error reporting if debug variable is set to true
