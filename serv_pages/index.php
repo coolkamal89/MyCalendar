@@ -162,7 +162,7 @@
 		$result = $query->fetchAll(PDO::FETCH_ASSOC);
 		$pdo = null;
 
-		array_unshift($result, ["group_id" => 0, "group_name" => "Default"]);
+		array_unshift($result, ['group_id' => 0, 'group_name' => 'Default']);
 
 		$output = ['success' => false, 'data' => '', 'message' => 'Error while getting groups!'];
 		if ($result) {
@@ -196,7 +196,13 @@
 
 		$query->nextRowset();
 		$result = $query->fetchAll(PDO::FETCH_ASSOC);
-		$output['data'] = (!empty($result) ? $result : '');
+
+		if (!empty($result)) {
+			$output['data'] =  $result;
+			array_unshift($output['data'], ['group_id' => 0, 'group_name' => 'Default']);
+		} else {
+			$output['data'] = '';
+		}
 
 		$pdo = null;
 
