@@ -177,6 +177,10 @@
 	function doCreateGroup() {
 		global $request;
 
+		if ($request['group_name'] == '') {
+			out_json(['success' => false, 'data' => '', 'message' => 'Please specify the group name!']);
+		}
+
 		$pdo = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASS);
 		$query = $pdo->prepare('CALL spCreateGroup(:user_id, :login_session_id, :group_name);');
 		$query->execute([
