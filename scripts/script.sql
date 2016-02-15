@@ -223,8 +223,8 @@ BEGIN
 	SELECT COUNT(*)
 	INTO intGroupUserUnique
 	FROM groups
-	WHERE user_id = user_id
-		AND group_id = group_id;
+	WHERE groups.user_id = user_id
+		AND groups.group_id = group_id;
 
 	IF intGroupUserUnique = 0 THEN
 		SELECT
@@ -234,8 +234,9 @@ BEGIN
 	ELSE
 		DELETE
 		FROM groups
-		WHERE group_id = group_id
-			AND user_id = user_id;
+		WHERE groups.group_id = group_id
+			AND groups.user_id = user_id
+			AND group_id != '';
 
 		IF ROW_COUNT() = 1 THEN
 			SELECT
@@ -389,4 +390,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-02-15 22:12:23
+-- Dump completed on 2016-02-15 22:18:11
