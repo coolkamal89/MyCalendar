@@ -47,7 +47,10 @@
 
 		$pdo = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASS);
 		$query = $pdo->prepare('CALL spLogin(:email, :password);');
-		$query->execute([':email' => $request['email'], ':password' => $request['password']]);
+		$query->execute([
+			':email' => $request['email'],
+			':password' => $request['password']
+		]);
 		$result = $query->fetch(PDO::FETCH_ASSOC);
 		$pdo = null;
 
@@ -67,7 +70,10 @@
 
 		$pdo = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASS);
 		$query = $pdo->prepare('CALL spLogout(:user_id, :login_session_id);');
-		$query->execute([':user_id' => $request['user_id'], ':login_session_id' => $request['login_session_id']]);
+		$query->execute([
+			':user_id' => $request['user_id'],
+			':login_session_id' => $request['login_session_id']
+		]);
 		$result = $query->fetch(PDO::FETCH_ASSOC);
 		$pdo = null;
 
@@ -87,7 +93,10 @@
 
 		$pdo = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASS);
 		$query = $pdo->prepare('CALL spCheckLogin(:user_id, :login_session_id);');
-		$query->execute([':user_id' => $request['user_id'], ':login_session_id' => $request['login_session_id']]);
+		$query->execute([
+			':user_id' => $request['user_id'],
+			':login_session_id' => $request['login_session_id']
+		]);
 		$result = $query->fetch(PDO::FETCH_ASSOC);
 		$pdo = null;
 
