@@ -55,7 +55,7 @@ CREATE TABLE `groups` (
   `group_name` varchar(45) COLLATE latin1_general_cs DEFAULT NULL,
   `created_on` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`group_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -93,7 +93,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'kamal','Kamal','Relwani','kamal','58BC3F9198904F4BAE43','2016-02-15 14:26:40');
+INSERT INTO `users` VALUES (1,'kamal','Kamal','Relwani','kamal','798366E8E9EACDB22A49','2016-02-15 18:27:43');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -129,6 +129,155 @@ BEGIN
 			AND users.login_session_id = login_session_id;
 	END IF;
 
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `spCreateGroup` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spCreateGroup`(user_id VARCHAR(50), login_session_id VARCHAR(50), group_name VARCHAR(50))
+BEGIN
+	
+	DECLARE intUserLogin INT;
+	DECLARE intGroupUserUnique INT;
+	
+	SET intUserLogin = 0;
+	SET intGroupUserUnique = 0;
+
+	SELECT COUNT(*)
+	INTO intUserLogin
+	FROM users
+	WHERE user_id = user_id
+		AND users.login_session_id = login_session_id
+		AND users.login_session_id != '';
+
+	SELECT COUNT(*)
+	INTO intGroupUserUnique
+	FROM groups
+	WHERE groups.user_id = user_id
+		AND UPPER(TRIM(groups.group_name)) = UPPER(TRIM(group_name));
+
+	IF intUserLogin = 0 THEN
+		SELECT
+			false AS success,
+			'' AS data,
+			'User not logged in!' AS message;
+	ELSE
+		IF intGroupUserUnique != 0 THEN
+			SELECT
+				false AS success,
+				'' AS data,
+				'It seems you already have a group with the same name!' AS message;
+		ELSE
+			INSERT INTO groups(user_id, group_name)
+			VALUES (user_id, group_name);
+
+			IF ROW_COUNT() = 1 THEN
+				SELECT
+					true AS success,
+					'' AS message,
+					'' AS data;
+				CALL spGetGroups(user_id, login_session_id);
+			ELSE
+				SELECT
+					false AS success,
+					'' AS data,
+					'Error creating group!' AS message;
+			END IF;
+		END IF;
+	END IF;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `spDeleteGroup` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spDeleteGroup`(user_id VARCHAR(50), login_session_id VARCHAR(50), group_id VARCHAR(50))
+BEGIN
+
+	DECLARE intGroupUserUnique INT;
+	DECLARE CONTINUE HANDLER FOR SQLSTATE '23000' BEGIN END;
+	
+	SET intGroupUserUnique = 0;
+
+	SELECT COUNT(*)
+	INTO intGroupUserUnique
+	FROM groups
+	WHERE user_id = user_id
+		AND group_id = group_id;
+
+	IF intGroupUserUnique = 0 THEN
+		SELECT
+			false AS success,
+			'' AS data,
+			'The group you\'re trying to deleted doesn\'t exists!' AS message;
+	ELSE
+		DELETE
+		FROM groups
+		WHERE group_id = group_id
+			AND user_id = user_id;
+
+		IF ROW_COUNT() = 1 THEN
+			SELECT
+				true AS success,
+				'' AS message,
+				'' AS data;
+			CALL spGetGroups(user_id, login_session_id);
+		ELSE
+			SELECT
+				false AS success,
+				'' AS data,
+				'Error deleting group!' AS message;
+		END IF;
+	END IF;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `spGetGroups` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spGetGroups`(user_id VARCHAR(50), login_session_id VARCHAR(50))
+BEGIN
+	SELECT
+		g.group_id,
+		g.group_name,
+		g.created_on
+	FROM groups g
+		INNER JOIN users u
+	WHERE g.user_id = user_id
+		AND u.login_session_id = login_session_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -213,14 +362,14 @@ BEGIN
 
 	IF ROW_COUNT() = 1 THEN
 		SELECT
-			true AS status,
+			true AS success,
 			'' AS message,
 			'' AS data;
 		CALL spLogin(email, password);
 	ELSE
 		SELECT
-			false AS status,
-			'' AS message,
+			false AS success,
+			'' AS data,
 			'Email address already exists!' AS message;
 	END IF;
 
@@ -240,4 +389,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-02-15 17:29:56
+-- Dump completed on 2016-02-15 21:13:21
