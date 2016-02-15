@@ -34,6 +34,9 @@
 
 		case		'register'		:	doRegister();
 										break;
+
+		case		'getgroups'		:	doGetGroups();
+										break;
 		
 		default						:	out_json(['success' => false, 'message' => 'Invalid command!']);
 										break;
@@ -136,6 +139,29 @@
 		$output['data'] = (!empty($result) ? $result : '');
 
 		$pdo = null;
+
+		out_json($output);
+	}
+
+	/*
+	*	Function to get groups of a user
+	*/
+	function doGetGroups() {
+		global $request;
+
+		$pdo = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASS);
+		$query = $pdo->prepare('CALL spGetGroups(:user_id, :login_session_id);');
+		$query->execute([
+			':user_id' => $request['user_id'],
+			':login_session_id' => $request['login_session_id']
+		]);
+		$result = $query->fetchAll(PDO::FETCH_ASSOC);
+		$pdo = null;
+
+		$output = ['success' => false, 'data' => '', 'message' => 'Error while getting groups!'];
+		if ($result) {
+			$output = ['success' => true, 'data' => $result, 'message' => ''];
+		}
 
 		out_json($output);
 	}
