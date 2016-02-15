@@ -37,6 +37,9 @@
 
 		case		'getgroups'		:	doGetGroups();
 										break;
+
+		case		'creategroup'	:	doCreateGroup();
+										break;
 		
 		default						:	out_json(['success' => false, 'message' => 'Invalid command!']);
 										break;
@@ -162,6 +165,33 @@
 		if ($result) {
 			$output = ['success' => true, 'data' => $result, 'message' => ''];
 		}
+
+		out_json($output);
+	}
+
+	/*
+	*	Function to create a group
+	*/
+	function doCreateGroup() {
+		global $request;
+
+		$pdo = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASS);
+		$query = $pdo->prepare('CALL spCreateGroup(:user_id, :login_session_id, :group_name);');
+		$query->execute([
+			':user_id' => $request['user_id'],
+			':login_session_id' => $request['login_session_id'],
+			':group_name' => $request['group_name']
+		]);
+		$result = $query->fetch(PDO::FETCH_ASSOC);
+		$result['success'] = ($result['success'] == '1' ? true : false);
+
+		$output = $result;
+
+		$query->nextRowset();
+		$result = $query->fetch(PDO::FETCH_ASSOC);
+		$output['data'] = (!empty($result) ? $result : '');
+
+		$pdo = null;
 
 		out_json($output);
 	}
