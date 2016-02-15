@@ -161,6 +161,8 @@
 		$result = $query->fetchAll(PDO::FETCH_ASSOC);
 		$pdo = null;
 
+		array_unshift($result, ["group_id" => 0, "group_name" => "Default"]);
+
 		$output = ['success' => false, 'data' => '', 'message' => 'Error while getting groups!'];
 		if ($result) {
 			$output = ['success' => true, 'data' => $result, 'message' => ''];
