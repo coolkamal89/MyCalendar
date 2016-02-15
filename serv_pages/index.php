@@ -216,7 +216,7 @@
 		$result = $query->fetch(PDO::FETCH_ASSOC);
 		$pdo = null;
 
-		$output = ['success' => false, 'data' => '', 'message' => 'Error deleting group'];
+		$output = ['success' => false, 'data' => '', 'message' => 'Error deleting group!'];
 		if ($result) {
 			$output = ['success' => true, 'data' => '', 'message' => 'Group successfully deleted!'];
 		}

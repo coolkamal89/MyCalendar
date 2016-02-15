@@ -16,3 +16,5 @@ CALL spCreateGroup('1', '0250B831CBF55B20A40A', 'Group 122');
 
 CALL spGetGroups('1', '0250B831CBF55B20A40A');
 
+CALL spDeleteGroup('1', '0250B831CBF55B20A40A','111');
+
