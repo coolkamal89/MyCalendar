@@ -39,6 +39,7 @@
 					<a href="#/group/{{ group.group_name | urlName }}/{{ group.group_id }}">
 						<span data-role='group-name'>{{ group.group_name }}</span>
 						<span class="badge">{{ group.event_count }}</span>
+						{{ group.created_on | dateToISO | date:'dd-MMM-yyyy' }}
 					</a>
 				</td>
 				<td>
