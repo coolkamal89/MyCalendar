@@ -10,7 +10,7 @@
 		<script src="lib/angular/angular-animate.min.js"></script>
 		<script src="lib/app/app.js"></script>
 		<script src="lib/app/controllers.js"></script>
-		<meta name="viewport" content="width=device-width, initial-scale=2.0" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 		<style type="text/css">
 			.navbar-brand.active, .navbar-brand.active:hover, .navbar-brand.active:active { background-color: #e7e7e7!important; }
@@ -19,7 +19,8 @@
 			.group-list-table tr:hover { background-color: #f5f5f5; }
 			.group-list-table tr:first-child td { border-top: none; }
 			h2.partial-title { margin-top: 0px!important; }
-			footer { text-align: center; }
+			.main-container { margin-bottom: 40px; }
+			footer { text-align: center; position: fixed; bottom: 0px; width: 100%; background-color: #f5f5f5; border-top: 1px solid #ddd; padding: 5px; }
 		</style>
 	</head>
 	<body>
@@ -56,7 +57,7 @@
 				</div>
 			</div>
 		</nav>
-		<div class="container">
+		<div class="container main-container">
 			<div class="main" ng-view>
 			</div>
 		</div>
@@ -71,9 +72,10 @@
 			});
 		</script>
 		<footer>
-			<hr/>
-			&copy; <script>document.write(new Date().getFullYear());</script>
+			Copyright &copy; <script>document.write(new Date().getFullYear());</script>
 			Developed by <a href="http://coolkamal89.selfip.com">Kamal Relwani</a>
+			<br/>
+			Made with <span class="glyphicon glyphicon-heart"></span> using Bootstrap, Angular, PHP and MySQL
 		</footer>
 	</body>
 </html>
