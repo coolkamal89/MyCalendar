@@ -7,18 +7,20 @@
 			<form ng-submit="Login.doLogin();">
 				<fieldset>
 					<div class="form-group">
-						<label for="txtUser">Enter Username: </label>
-						<input id="username" type="text" ng-model="username" placeholder="Enter username" class="form-control" autofocus />
+						<label for="email">Email: </label>
+						<input id="email" type="text" ng-model="email" placeholder="Email" class="form-control" autofocus />
 					</div>
 					<div class="form-group">
-						<label for="txtPass">Enter Password: </label>
-						<input id="password" type="password" ng-model="password" placeholder="Enter password" class="form-control" />
+						<label for="password">Password: </label>
+						<input id="password" type="password" ng-model="password" placeholder="Password" class="form-control" />
 					</div>
 					<div role="alert" class="alert alert-danger ng-hide" ng-show="error">
 						{{ error }}
 					</div>
 					<button class="btn btn-primary">Submit</button>
 					&nbsp;<a href="javascript:;" ng-click="viewForgot();">Forgot Password?</a>
+					&nbsp;|&nbsp;
+					&nbsp;<a href="#/register">New user?</a>
 				</fieldset>
 			</form>
 		</div>
