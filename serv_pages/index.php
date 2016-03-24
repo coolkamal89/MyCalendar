@@ -249,10 +249,11 @@
 		}
 
 		$pdo = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASS);
-		$query = $pdo->prepare('CALL spEditGroup(:user_id, :login_session_id, :group_name);');
+		$query = $pdo->prepare('CALL spEditGroup(:user_id, :login_session_id, :group_id, :group_name);');
 		$query->execute([
 			':user_id' => $request['user_id'],
 			':login_session_id' => $request['login_session_id'],
+			':group_id' => $request['group_id'],
 			':group_name' => $request['group_name']
 		]);
 		$result = $query->fetch(PDO::FETCH_ASSOC);
