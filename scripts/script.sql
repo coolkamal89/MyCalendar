@@ -322,6 +322,76 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `spEditGroup` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spEditGroup`(user_id VARCHAR(50), login_session_id VARCHAR(50), group_id VARCHAR(50), group_name VARCHAR(50))
+BEGIN
+	
+	DECLARE intUserLogin INT;
+	DECLARE intGroupUserUnique INT;
+	
+	SET intUserLogin = 0;
+	SET intGroupUserUnique = 0;
+
+	SELECT COUNT(*)
+	INTO intUserLogin
+	FROM users
+	WHERE user_id = user_id
+		AND users.login_session_id = login_session_id
+		AND users.login_session_id != '';
+
+	SELECT COUNT(*)
+	INTO intGroupUserUnique
+	FROM groups
+	WHERE groups.user_id = user_id
+		AND UPPER(TRIM(groups.group_name)) = UPPER(TRIM(group_name));
+
+	IF intUserLogin = 0 THEN
+		SELECT
+			false AS success,
+			'' AS data,
+			'User not logged in!' AS message;
+	ELSE
+		IF intGroupUserUnique != 0 THEN
+			SELECT
+				false AS success,
+				'' AS data,
+				'It seems you already have a group with the same name!' AS message;
+		ELSE
+			UPDATE groups
+				SET groups.group_name = group_name
+			WHERE groups.group_id = group_id
+				AND groups.user_id = user_id;
+
+			IF ROW_COUNT() = 1 THEN
+				SELECT
+					true AS success,
+					'' AS message,
+					'' AS data;
+				CALL spGetGroups(user_id, login_session_id);
+			ELSE
+				SELECT
+					false AS success,
+					'' AS data,
+					'Error editing group!' AS message;
+			END IF;
+		END IF;
+	END IF;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `spGetGroups` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -502,4 +572,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-03-24 13:36:28
+-- Dump completed on 2016-03-24 14:11:03
