@@ -25,6 +25,7 @@ DROP TABLE IF EXISTS `dates`;
 CREATE TABLE `dates` (
   `event_id` int(11) NOT NULL,
   `event_name` varchar(45) COLLATE latin1_general_cs DEFAULT NULL,
+  `event_date` datetime DEFAULT NULL,
   `group_id` int(11) NOT NULL DEFAULT '0',
   `user_id` int(11) DEFAULT NULL,
   `created_on` datetime DEFAULT CURRENT_TIMESTAMP,
@@ -38,6 +39,7 @@ CREATE TABLE `dates` (
 
 LOCK TABLES `dates` WRITE;
 /*!40000 ALTER TABLE `dates` DISABLE KEYS */;
+INSERT INTO `dates` VALUES (0,'asd','0000-00-00 00:00:00',1,1,'2016-03-24 16:49:31');
 /*!40000 ALTER TABLE `dates` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -190,6 +192,70 @@ BEGIN
 		FROM users
 		WHERE users.user_id = user_id
 			AND users.login_session_id = login_session_id;
+	END IF;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `spCreateEvent` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spCreateEvent`(user_id VARCHAR(50), login_session_id VARCHAR(50), group_id INT, event_name VARCHAR(50), event_date VARCHAR(50))
+BEGIN
+	
+	DECLARE intUserLogin INT;
+	DECLARE intGroupBelongsToUser INT;
+	
+	SET intUserLogin = 0;
+	SET intGroupBelongsToUser = 0;
+
+	SELECT COUNT(*)
+	INTO intUserLogin
+	FROM users
+	WHERE user_id = user_id
+		AND users.login_session_id = login_session_id
+		AND users.login_session_id != '';
+
+	SELECT COUNT(*)
+	INTO intGroupBelongsToUser
+	FROM groups
+	WHERE groups.user_id = user_id
+		AND groups.group_id = group_id;
+
+	IF intUserLogin = 0 THEN
+		SELECT
+			false AS success,
+			'' AS data,
+			'User not logged in!' AS message;
+	ELSE
+		IF intGroupBelongsToUser = 0 THEN
+			SELECT
+				false AS success,
+				'' AS data,
+				'This group doesn\'nt belong to you!' AS message;
+		ELSE
+			INSERT INTO dates(user_id, group_id, event_name, event_date)
+			VALUES (user_id, group_id, event_name, event_date);
+
+			IF ROW_COUNT() = 1 THEN
+				CALL spGetEventsByGroupId(user_id, login_session_id, group_id);
+			ELSE
+				SELECT
+					false AS success,
+					'' AS data,
+					'Error creating event!' AS message;
+			END IF;
+		END IF;
 	END IF;
 
 END ;;
@@ -423,7 +489,7 @@ BEGIN
 	INTO intGroupBelongsToUser
 	FROM groups
 	WHERE groups.user_id = user_id
-		AND groups.group_id = group_id;
+		AND groups.group_id = group_id OR group_id = 0;
 
 	IF intUserLogin = 0 THEN
 		SELECT
@@ -448,6 +514,74 @@ BEGIN
 				AND dates.group_id = group_id;
 		END IF;
 	END IF;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `spGetGroupDetails` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spGetGroupDetails`(user_id VARCHAR(50), login_session_id VARCHAR(50), group_id INT)
+BEGIN
+	
+	DECLARE intUserLogin INT;
+	DECLARE intGroupBelongsToUser INT;
+	
+	SET intUserLogin = 0;
+	SET intGroupBelongsToUser = 0;
+
+	SELECT COUNT(*)
+	INTO intUserLogin
+	FROM users
+	WHERE user_id = user_id
+		AND users.login_session_id = login_session_id
+		AND users.login_session_id != '';
+
+	SELECT COUNT(*)
+	INTO intGroupBelongsToUser
+	FROM groups
+	WHERE groups.user_id = user_id
+		AND groups.group_id = group_id OR group_id = 0;
+
+	IF intUserLogin = 0 THEN
+		SELECT
+			false AS success,
+			'' AS data,
+			'User not logged in!' AS message;
+	ELSE
+		IF intGroupBelongsToUser = 0 THEN
+			SELECT
+				false AS success,
+				'' AS data,
+				'Group doesn\'t belong to you!' AS message;
+		ELSE
+			SELECT
+				true AS success,
+				'' AS message,
+				'' AS data;
+			
+			IF group_id = 0 THEN
+				SELECT 'Default' as 'group_name';
+			ELSE
+				SELECT
+					group_name
+				FROM groups
+				WHERE groups.group_id = group_id
+					AND groups.user_id = user_id;
+			END IF;
+
+		END IF;
+	END IF;
+
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -642,4 +776,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-03-24 16:15:16
+-- Dump completed on 2016-03-24 17:00:56
