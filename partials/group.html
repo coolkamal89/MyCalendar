@@ -1,1 +1,82 @@
-This is single group ({{ groupUrl }} - {{ groupId }}) - {{ groupsCount }}
+<h2 class="partial-title">Manage Dates ({{ groupUrl }} - {{ groupId }} - {{ groupsCount }})</h2>
+<br/>
+<a href="#/groups">&larr; Go back</a>
+<hr/>
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">Add Date</h3>
+	</div>
+	<div class="panel-body">
+		<form class="form-inline">
+			<div class="form-group">
+				<label for="exampleInputName2">Event: </label>
+				<input type="text" class="form-control" id="exampleInputName2" placeholder="">
+			</div>
+			<div class="form-group">
+				<label for="exampleInputName2">Date: </label>
+				<input type="text" class="form-control" id="exampleInputName2" placeholder="">
+			</div>
+			<button type="submit" class="btn btn-primary">Save</button>
+		</form>
+		<div role="alert" class="alert alert-danger ng-hide" ng-show="error">
+			{{ error }}
+		</div>
+	</div>
+</div>
+
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		<h3 class="panel-title">Dates <span class="badge">1</span></h3>
+	</div>
+	<div class="panel-body">
+		<table class="table group-list-table">
+			<tr>
+				<td><a href="">Default <span class="badge">3</span></a></td>
+				<td>
+					<div class="btn-group pull-right" role="group" aria-label="...">
+						<button type="button" class="btn btn-info">Edit</button>
+						<button type="button" class="btn btn-danger">Delete</button>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td><a href="">Birthdays <span class="badge">3</span></a></td>
+				<td>
+					<div class="btn-group pull-right" role="group" aria-label="...">
+						<button type="button" class="btn btn-info">Edit</button>
+						<button type="button" class="btn btn-danger">Delete</button>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td><a href="">Anniversaries <span class="badge">3</span></a></td>
+				<td>
+					<div class="btn-group pull-right" role="group" aria-label="...">
+						<button type="button" class="btn btn-info">Edit</button>
+						<button type="button" class="btn btn-danger">Delete</button>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td><a href="">Work <span class="badge">3</span></a></td>
+				<td>
+					<div class="btn-group pull-right" role="group" aria-label="...">
+						<button type="button" class="btn btn-info">Edit</button>
+						<button type="button" class="btn btn-danger">Delete</button>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td><a href="">Miscellaneous <span class="badge">3</span></a></td>
+				<td>
+					<div class="btn-group pull-right" role="group" aria-label="...">
+						<button type="button" class="btn btn-info">Edit</button>
+						<button type="button" class="btn btn-danger">Delete</button>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+
+</div>
