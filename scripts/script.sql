@@ -23,14 +23,14 @@ DROP TABLE IF EXISTS `dates`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `dates` (
-  `event_id` int(11) NOT NULL,
+  `event_id` int(11) NOT NULL AUTO_INCREMENT,
   `event_name` varchar(45) COLLATE latin1_general_cs DEFAULT NULL,
   `event_date` datetime DEFAULT NULL,
-  `group_id` int(11) NOT NULL DEFAULT '0',
-  `user_id` int(11) DEFAULT NULL,
+  `group_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `created_on` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`event_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -39,7 +39,7 @@ CREATE TABLE `dates` (
 
 LOCK TABLES `dates` WRITE;
 /*!40000 ALTER TABLE `dates` DISABLE KEYS */;
-INSERT INTO `dates` VALUES (0,'asd','0000-00-00 00:00:00',1,1,'2016-03-24 16:49:31');
+INSERT INTO `dates` VALUES (1,'asd','0000-00-00 00:00:00',1,1,'2016-03-24 16:49:31'),(2,'asddddd','0000-00-00 00:00:00',1,1,'2016-03-24 17:43:04'),(3,'asddddd','0000-00-00 00:00:00',1,1,'2016-03-24 17:43:06'),(4,'asddddd','0000-00-00 00:00:00',1,1,'2016-03-24 17:43:07'),(5,'fff','0000-00-00 00:00:00',4,1,'2016-03-24 17:43:18'),(6,'rrr','0000-00-00 00:00:00',0,1,'2016-03-24 17:43:33'),(7,'ggg','0000-00-00 00:00:00',0,1,'2016-03-24 17:45:26'),(8,'ggggg','0000-00-00 00:00:00',0,1,'2016-03-24 17:45:28'),(9,'ggggg222','0000-00-00 00:00:00',0,1,'2016-03-24 17:45:32');
 /*!40000 ALTER TABLE `dates` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -57,7 +57,7 @@ CREATE TABLE `groups` (
   `starred` char(1) COLLATE latin1_general_cs DEFAULT 'N',
   `created_on` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`group_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -87,7 +87,7 @@ CREATE TABLE `users` (
   `created_on` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`user_id`,`email`),
   UNIQUE KEY `email_UNIQUE` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -107,6 +107,46 @@ UNLOCK TABLES;
 --
 -- Dumping routines for database 'MyDatesDB'
 --
+/*!50003 DROP FUNCTION IF EXISTS `fnDoesGroupBelongToUser` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` FUNCTION `fnDoesGroupBelongToUser`() RETURNS int(11)
+BEGIN
+
+RETURN 1;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `fnIsUserLoggedIn` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` FUNCTION `fnIsUserLoggedIn`() RETURNS int(11)
+BEGIN
+
+RETURN 1;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `spChangePassword` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -231,6 +271,10 @@ BEGIN
 	FROM groups
 	WHERE groups.user_id = user_id
 		AND groups.group_id = group_id;
+
+	IF group_id = 0 THEN
+		SET intGroupBelongsToUser = 1;
+	END IF;
 
 	IF intUserLogin = 0 THEN
 		SELECT
@@ -410,7 +454,7 @@ BEGIN
 	SELECT COUNT(*)
 	INTO intUserLogin
 	FROM users
-	WHERE user_id = user_id
+	WHERE users.user_id = user_id
 		AND users.login_session_id = login_session_id
 		AND users.login_session_id != '';
 
@@ -601,23 +645,41 @@ DELIMITER ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `spGetGroups`(user_id VARCHAR(50), login_session_id VARCHAR(50))
 BEGIN
+
+	DECLARE intDefaultEventsCount INT;
+	
+	SET intDefaultEventsCount = 0;
+
+	SELECT COUNT(*)
+	INTO intDefaultEventsCount
+	FROM dates d
+		INNER JOIN users u ON u.user_id = d.user_id
+	WHERE d.user_id = user_id
+		AND u.login_session_id = login_session_id
+		AND u.login_session_id != ''
+	AND d.group_id = 0;
+
 	SELECT
 		0 AS group_id,
 		'Default' AS group_name,
 		'' AS created_on,
 		'N' AS starred,
-		ROUND(RAND() * 100) AS event_count
+		intDefaultEventsCount AS event_count
 	UNION
 	SELECT
 		g.group_id,
 		g.group_name,
 		g.created_on,
 		g.starred,
-		ROUND(RAND() * 100) AS event_count
+		COUNT(d.event_id) AS event_count
 	FROM groups g
-		INNER JOIN users u
+		INNER JOIN users u ON g.user_id = u.user_id
+		LEFT OUTER JOIN dates d ON g.group_id = d.group_id
 	WHERE g.user_id = user_id
-		AND u.login_session_id = login_session_id;
+		AND u.login_session_id = login_session_id
+		AND u.login_session_id != ''
+	GROUP BY g.group_id;
+
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -777,4 +839,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-03-24 17:06:18
+-- Dump completed on 2016-03-24 18:13:02
