@@ -146,7 +146,7 @@ BEGIN
 		IF intUserLoginPasswordCorrect = 0 THEN
 			SELECT
 				false AS success,
-				'Incorrect password!' AS message,
+				'Incorrect existing password!' AS message,
 				'' AS data;
 		ELSE
 			UPDATE users
@@ -502,4 +502,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-03-24 13:29:11
+-- Dump completed on 2016-03-24 13:36:28
