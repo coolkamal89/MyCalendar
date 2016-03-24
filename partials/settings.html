@@ -22,8 +22,8 @@
 							<label for="last_name">Last Name: </label>
 							<input id="last_name" type="text" ng-model="last_name"required required pattern="[a-zA-Z0-9]+" placeholder="Last Name" class="form-control" />
 						</div>
-						<div role="alert" class="alert alert-danger ng-hide" ng-show="error">
-							{{ error }}
+						<div role="alert" class="alert alert-danger ng-hide" ng-show="updateProfileError">
+							{{ updateProfileError }}
 						</div>
 						<button class="btn btn-primary">Update Profile</button>
 					</fieldset>
