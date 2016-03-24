@@ -141,7 +141,7 @@
 		]);
 		$result = $query->fetch(PDO::FETCH_ASSOC);
 		$result['success'] = ($result['success'] == '1' ? true : false);
-		$result['message'] = ($result['message'] == '' ? "An error occured!" : $result['message']);
+		$result['message'] = (!$result['success'] && $result['message'] == '' ? "An error occured!" : $result['message']);
 
 		$output = $result;
 
@@ -198,7 +198,7 @@
 		]);
 		$result = $query->fetch(PDO::FETCH_ASSOC);
 		$result['success'] = ($result['success'] == '1' ? true : false);
-		$result['message'] = ($result['message'] == '' ? "An error occured!" : $result['message']);
+		$result['message'] = (!$result['success'] && $result['message'] == '' ? "An error occured!" : $result['message']);
 
 		$output = $result;
 
@@ -254,7 +254,7 @@
 		]);
 		$result = $query->fetch(PDO::FETCH_ASSOC);
 		$result['success'] = ($result['success'] == '1' ? true : false);
-		$result['message'] = ($result['message'] == '' ? "An error occured!" : $result['message']);
+		$result['message'] = (!$result['success'] && $result['message'] == '' ? "An error occured!" : $result['message']);
 
 		$output = $result;
 
@@ -293,7 +293,7 @@
 		]);
 		$result = $query->fetch(PDO::FETCH_ASSOC);
 		$result['success'] = ($result['success'] == '1' ? true : false);
-		$result['message'] = ($result['message'] == '' ? "An error occured!" : $result['message']);
+		$result['message'] = (!$result['success'] && $result['message'] == '' ? "An error occured!" : $result['message']);
 
 		$output = $result;
 
