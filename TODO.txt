@@ -1,1 +1,3 @@
-The Default group and the counts should come from the database rather than PHP.
+DONE - The Default group and the counts should come from the database rather than PHP.
+Make MySQL functions for misc (check user login, group-belongs-to-user, etc)
+Deleting a group should also delete events in that group. (Cascade effect)
