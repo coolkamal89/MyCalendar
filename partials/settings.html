@@ -37,22 +37,22 @@
 				<h3 class="panel-title" style="text-align: center;"><strong>Change Password</strong></h3>
 			</div>
 			<div class="panel-body">
-				<form ng-submit="Login.doRegister();">
+				<form ng-submit="Login.doChangePassword();">
 					<fieldset>
 						<div class="form-group">
 							<label for="password">Current Password: </label>
-							<input id="password" type="password" ng-model="password" placeholder="Current Password" class="form-control" />
+							<input id="password" type="password" ng-model="password" required placeholder="Current Password" class="form-control" />
 						</div>
 						<div class="form-group">
 							<label for="new_password">New Password: </label>
-							<input id="new_password" type="password" ng-model="new_password" placeholder="New Password" class="form-control" />
+							<input id="new_password" type="password" ng-model="new_password" required placeholder="New Password" class="form-control" />
 						</div>
 						<div class="form-group">
 							<label for="confirm_new_password">Confirm New Password: </label>
-							<input id="confirm_new_password" type="password" ng-model="confirm_new_password" placeholder="Confirm New Password" class="form-control" />
+							<input id="confirm_new_password" type="password" ng-model="confirm_new_password" required placeholder="Confirm New Password" class="form-control" />
 						</div>
-						<div role="alert" class="alert alert-danger ng-hide" ng-show="error">
-							{{ error }}
+						<div role="alert" class="alert alert-danger ng-hide" ng-show="changePasswordError">
+							{{ changePasswordError }}
 						</div>
 						<button class="btn btn-primary">Change Password</button>
 					</fieldset>
