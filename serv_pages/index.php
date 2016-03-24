@@ -212,7 +212,6 @@
 
 		if (!empty($result)) {
 			$output['data'] =  $result;
-			array_unshift($output['data'], ['group_id' => 0, 'group_name' => 'Default']);
 		} else {
 			$output['data'] = '';
 		}
