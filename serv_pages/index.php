@@ -298,7 +298,7 @@
 		$output = $result;
 
 		$query->nextRowset();
-		$result = $query->fetchAll(PDO::FETCH_ASSOC);
+		$result = $query->fetch(PDO::FETCH_ASSOC);
 
 		if (!empty($result)) {
 			$output['data'] =  $result;
