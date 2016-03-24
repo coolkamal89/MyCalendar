@@ -193,11 +193,12 @@
 		}
 
 		$pdo = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASS);
-		$query = $pdo->prepare('CALL spCreateGroup(:user_id, :login_session_id, :group_name);');
+		$query = $pdo->prepare('CALL spCreateGroup(:user_id, :login_session_id, :group_name, :group_star);');
 		$query->execute([
 			':user_id' => $request['user_id'],
 			':login_session_id' => $request['login_session_id'],
-			':group_name' => $request['group_name']
+			':group_name' => $request['group_name'],
+			':group_star' => $request['group_star']
 		]);
 		$result = $query->fetch(PDO::FETCH_ASSOC);
 		$result['success'] = ($result['success'] == '1' ? true : false);
@@ -249,12 +250,13 @@
 		}
 
 		$pdo = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASS);
-		$query = $pdo->prepare('CALL spEditGroup(:user_id, :login_session_id, :group_id, :group_name);');
+		$query = $pdo->prepare('CALL spEditGroup(:user_id, :login_session_id, :group_id, :group_name, :group_star);');
 		$query->execute([
 			':user_id' => $request['user_id'],
 			':login_session_id' => $request['login_session_id'],
 			':group_id' => $request['group_id'],
-			':group_name' => $request['group_name']
+			':group_name' => $request['group_name'],
+			':group_star' => $request['group_star']
 		]);
 		$result = $query->fetch(PDO::FETCH_ASSOC);
 		$result['success'] = ($result['success'] == '1' ? true : false);
