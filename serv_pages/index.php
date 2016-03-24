@@ -404,7 +404,7 @@
 		}
 
 		$pdo = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASS);
-		$query = $pdo->prepare('CALL spCreateGroup(:user_id, :login_session_id, :group_id, :event_name, :event_date);');
+		$query = $pdo->prepare('CALL spCreateEvent(:user_id, :login_session_id, :group_id, :event_name, :event_date);');
 		$query->execute([
 			':user_id' => $request['user_id'],
 			':login_session_id' => $request['login_session_id'],
