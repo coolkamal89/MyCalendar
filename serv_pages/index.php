@@ -44,6 +44,9 @@
 
 		case		'editgroup'		:	doEditGroup();
 										break;
+
+		case		'updateprofile'	:	doUpdateProfile();
+										break;
 		
 		default						:	out_json(['success' => false, 'message' => 'Invalid command!']);
 										break;
@@ -248,6 +251,45 @@
 			':user_id' => $request['user_id'],
 			':login_session_id' => $request['login_session_id'],
 			':group_name' => $request['group_name']
+		]);
+		$result = $query->fetch(PDO::FETCH_ASSOC);
+		$result['success'] = ($result['success'] == '1' ? true : false);
+		$result['message'] = ($result['message'] == '' ? "An error occured!" : $result['message']);
+
+		$output = $result;
+
+		$query->nextRowset();
+		$result = $query->fetchAll(PDO::FETCH_ASSOC);
+
+		if (!empty($result)) {
+			$output['data'] =  $result;
+		} else {
+			$output['data'] = '';
+		}
+
+		$pdo = null;
+
+		out_json($output);
+	}
+
+	function doUpdateProfile() {
+		global $request;
+
+		if ($request['first_name'] == '') {
+			out_json(['success' => false, 'data' => '', 'message' => 'Please specify the first name!']);
+		}
+
+		if ($request['last_name'] == '') {
+			out_json(['success' => false, 'data' => '', 'message' => 'Please specify the last name!']);
+		}
+
+		$pdo = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASS);
+		$query = $pdo->prepare('CALL spUpdateProfile(:user_id, :login_session_id, :first_name, :last_name);');
+		$query->execute([
+			':user_id' => $request['user_id'],
+			':login_session_id' => $request['login_session_id'],
+			':first_name' => $request['first_name'],
+			':last_name' => $request['last_name']
 		]);
 		$result = $query->fetch(PDO::FETCH_ASSOC);
 		$result['success'] = ($result['success'] == '1' ? true : false);
