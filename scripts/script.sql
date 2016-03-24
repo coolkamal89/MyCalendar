@@ -401,6 +401,13 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `spGetGroups`(user_id VARCHAR(50), login_session_id VARCHAR(50))
 BEGIN
 	SELECT
+		0 AS group_id,
+		'Default' AS group_name,
+		'' AS created_on,
+		'N' AS starred,
+		ROUND(RAND() * 100) AS event_count
+	UNION
+	SELECT
 		g.group_id,
 		g.group_name,
 		g.created_on,
@@ -569,4 +576,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-03-24 14:52:07
+-- Dump completed on 2016-03-24 14:59:44
