@@ -47,6 +47,9 @@
 
 		case		'updateprofile'	:	doUpdateProfile();
 										break;
+
+		case		'changepassword':	doChangePassword();
+										break;
 		
 		default						:	out_json(['success' => false, 'message' => 'Invalid command!']);
 										break;
@@ -305,6 +308,40 @@
 		} else {
 			$output['data'] = '';
 		}
+
+		$pdo = null;
+
+		out_json($output);
+	}
+
+	function doChangePassword() {
+		global $request;
+
+		if ($request['password'] == '') {
+			out_json(['success' => false, 'data' => '', 'message' => 'Please specify the old password!']);
+		}
+
+		if ($request['new_password'] == '') {
+			out_json(['success' => false, 'data' => '', 'message' => 'Please specify the new password!']);
+		}
+
+		if ($request['new_password'] != $request['confirm_new_password']) {
+			out_json(['success' => false, 'data' => '', 'message' => 'New and confirm new passwords do not match!']);
+		}
+
+		$pdo = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASS);
+		$query = $pdo->prepare('CALL spChangePassword(:user_id, :login_session_id, :password, :new_password);');
+		$query->execute([
+			':user_id' => $request['user_id'],
+			':login_session_id' => $request['login_session_id'],
+			':password' => $request['password'],
+			':new_password' => $request['new_password']
+		]);
+		$result = $query->fetch(PDO::FETCH_ASSOC);
+		$result['success'] = ($result['success'] == '1' ? true : false);
+		$result['message'] = (!$result['success'] && $result['message'] == '' ? "An error occured!" : $result['message']);
+
+		$output = $result;
 
 		$pdo = null;
 
