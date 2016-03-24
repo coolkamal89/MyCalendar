@@ -55,7 +55,7 @@ CREATE TABLE `groups` (
   `group_name` varchar(45) COLLATE latin1_general_cs DEFAULT NULL,
   `created_on` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`group_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -64,6 +64,7 @@ CREATE TABLE `groups` (
 
 LOCK TABLES `groups` WRITE;
 /*!40000 ALTER TABLE `groups` DISABLE KEYS */;
+INSERT INTO `groups` VALUES (1,1,'Birthdays','2016-03-24 11:38:36'),(3,1,'Work','2016-03-24 11:39:16'),(4,1,'Anniversaries','2016-03-24 11:39:22'),(5,1,'Reminders','2016-03-24 11:47:03');
 /*!40000 ALTER TABLE `groups` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -84,7 +85,7 @@ CREATE TABLE `users` (
   `created_on` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`user_id`,`email`),
   UNIQUE KEY `email_UNIQUE` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -93,6 +94,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (1,'kamal','Kamal','Relwani','kamal','C24D65691FBE65A887D4','2016-03-24 11:38:15');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -103,6 +105,68 @@ UNLOCK TABLES;
 --
 -- Dumping routines for database 'MyDatesDB'
 --
+/*!50003 DROP PROCEDURE IF EXISTS `spChangePassword` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spChangePassword`(user_id VARCHAR(50), login_session_id VARCHAR(50), password VARCHAR(50), new_password VARCHAR(50))
+BEGIN
+	
+	DECLARE intUserLogin INT;
+	DECLARE intUserLoginPasswordCorrect INT;
+	
+	SET intUserLogin = 0;
+	SET intUserLoginPasswordCorrect = 0;
+
+	SELECT COUNT(*)
+	INTO intUserLogin
+	FROM users
+	WHERE users.user_id = user_id
+		AND users.login_session_id = login_session_id
+		AND users.login_session_id != '';
+
+	SELECT COUNT(*)
+	INTO intUserLoginPasswordCorrect
+	FROM users
+	WHERE users.user_id = user_id
+		AND users.password = password;
+
+	IF intUserLogin = 0 THEN
+		SELECT
+			false AS success,
+			'' AS data,
+			'User not logged in!' AS message;
+	ELSE
+		IF intUserLoginPasswordCorrect = 0 THEN
+			SELECT
+				false AS success,
+				'Incorrect password!' AS message,
+				'' AS data;
+		ELSE
+			UPDATE users
+				SET users.password = new_password
+			WHERE users.user_id = user_id
+				AND users.login_session_id = login_session_id;
+
+			SELECT
+				true AS success,
+				'' AS message,
+				'' AS data;
+		END IF;
+	END IF;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `spCheckLogin` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -380,6 +444,54 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `spUpdateProfile` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spUpdateProfile`(user_id VARCHAR(50), login_session_id VARCHAR(50), first_name VARCHAR(50), last_name VARCHAR(50))
+BEGIN
+	
+	DECLARE intUserLogin INT;
+	
+	SET intUserLogin = 0;
+
+	SELECT COUNT(*)
+	INTO intUserLogin
+	FROM users
+	WHERE users.user_id = user_id
+		AND users.login_session_id = login_session_id
+		AND users.login_session_id != '';
+
+	IF intUserLogin = 0 THEN
+		SELECT
+			false AS success,
+			'' AS data,
+			'User not logged in!' AS message;
+	ELSE
+		UPDATE users
+			SET users.first_name = first_name,
+				users.last_name = last_name
+		WHERE users.user_id = user_id;
+
+		SELECT
+			true AS success,
+			'' AS message,
+			'' AS data;
+		CALL spCheckLogin(user_id, login_session_id);
+	END IF;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -390,4 +502,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-02-15 22:18:11
+-- Dump completed on 2016-03-24 13:29:11
