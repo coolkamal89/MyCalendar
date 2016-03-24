@@ -53,9 +53,10 @@ CREATE TABLE `groups` (
   `group_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `group_name` varchar(45) COLLATE latin1_general_cs DEFAULT NULL,
+  `starred` char(1) COLLATE latin1_general_cs DEFAULT 'N',
   `created_on` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`group_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -64,7 +65,7 @@ CREATE TABLE `groups` (
 
 LOCK TABLES `groups` WRITE;
 /*!40000 ALTER TABLE `groups` DISABLE KEYS */;
-INSERT INTO `groups` VALUES (1,1,'Birthdays','2016-03-24 11:38:36'),(3,1,'Work','2016-03-24 11:39:16'),(4,1,'Anniversaries','2016-03-24 11:39:22'),(5,1,'Reminders','2016-03-24 11:47:03');
+INSERT INTO `groups` VALUES (1,1,'Birthdays','N','2016-03-24 11:38:36'),(4,1,'Anniversaries','N','2016-03-24 11:39:22'),(5,1,'Reminders','N','2016-03-24 11:47:03'),(6,1,'Work','N','2016-03-24 14:11:53'),(8,1,'asdasda','Y','2016-03-24 14:43:37');
 /*!40000 ALTER TABLE `groups` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -94,7 +95,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'kamal','Kamal','Relwani','kamal','C24D65691FBE65A887D4','2016-03-24 11:38:15');
+INSERT INTO `users` VALUES (1,'kamal','Kamal','Relwani','kamal','8788CE0E4D96C00B3388','2016-03-24 11:38:15');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -208,7 +209,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `spCreateGroup`(user_id VARCHAR(50), login_session_id VARCHAR(50), group_name VARCHAR(50))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spCreateGroup`(user_id VARCHAR(50), login_session_id VARCHAR(50), group_name VARCHAR(50), group_star VARCHAR(1))
 BEGIN
 	
 	DECLARE intUserLogin INT;
@@ -242,8 +243,8 @@ BEGIN
 				'' AS data,
 				'It seems you already have a group with the same name!' AS message;
 		ELSE
-			INSERT INTO groups(user_id, group_name)
-			VALUES (user_id, group_name);
+			INSERT INTO groups(user_id, group_name, starred)
+			VALUES (user_id, group_name, group_star);
 
 			IF ROW_COUNT() = 1 THEN
 				SELECT
@@ -332,7 +333,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `spEditGroup`(user_id VARCHAR(50), login_session_id VARCHAR(50), group_id VARCHAR(50), group_name VARCHAR(50))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spEditGroup`(user_id VARCHAR(50), login_session_id VARCHAR(50), group_id VARCHAR(50), group_name VARCHAR(50), group_star VARCHAR(1))
 BEGIN
 	
 	DECLARE intUserLogin INT;
@@ -352,6 +353,7 @@ BEGIN
 	INTO intGroupUserUnique
 	FROM groups
 	WHERE groups.user_id = user_id
+		AND groups.group_id != group_id
 		AND UPPER(TRIM(groups.group_name)) = UPPER(TRIM(group_name));
 
 	IF intUserLogin = 0 THEN
@@ -367,22 +369,16 @@ BEGIN
 				'It seems you already have a group with the same name!' AS message;
 		ELSE
 			UPDATE groups
-				SET groups.group_name = group_name
+				SET groups.group_name = group_name,
+					groups.starred = group_star
 			WHERE groups.group_id = group_id
 				AND groups.user_id = user_id;
 
-			IF ROW_COUNT() = 1 THEN
-				SELECT
-					true AS success,
-					'' AS message,
-					'' AS data;
-				CALL spGetGroups(user_id, login_session_id);
-			ELSE
-				SELECT
-					false AS success,
-					'' AS data,
-					'Error editing group!' AS message;
-			END IF;
+			SELECT
+				true AS success,
+				'' AS message,
+				'' AS data;
+			CALL spGetGroups(user_id, login_session_id);
 		END IF;
 	END IF;
 
@@ -408,6 +404,7 @@ BEGIN
 		g.group_id,
 		g.group_name,
 		g.created_on,
+		g.starred,
 		ROUND(RAND() * 100) AS event_count
 	FROM groups g
 		INNER JOIN users u
@@ -572,4 +569,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-03-24 14:11:03
+-- Dump completed on 2016-03-24 14:52:07
