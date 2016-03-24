@@ -21,44 +21,47 @@
 
 	switch (trim(strtolower($command))) {
 		
-		case		'login'			:	doLogin();
-										break;
+		case		'login'				:	doLogin();
+											break;
 		
-		case		'checklogin'	:	doCheckLogin();
-										break;
+		case		'checklogin'		:	doCheckLogin();
+											break;
 
-		case		'logout'		:	doLogout();
-										break;
+		case		'logout'			:	doLogout();
+											break;
 
-		case		'register'		:	doRegister();
-										break;
+		case		'register'			:	doRegister();
+											break;
 
-		case		'getgroups'		:	doGetGroups();
-										break;
+		case		'getgroups'			:	doGetGroups();
+											break;
 
-		case		'creategroup'	:	doCreateGroup();
-										break;
+		case		'creategroup'		:	doCreateGroup();
+											break;
 
-		case		'deletegroup'	:	doDeleteGroup();
-										break;
+		case		'deletegroup'		:	doDeleteGroup();
+											break;
 
-		case		'editgroup'		:	doEditGroup();
-										break;
+		case		'editgroup'			:	doEditGroup();
+											break;
 
-		case		'geteventsbyid'	:	doGetEventsByGroupId();
-										break;
+		case		'getgroupdetails'	:	doGetGroupDetails();
+											break;
 
-		case		'createevent'	:	doCreateEvent();
-										break;
+		case		'geteventsbyid'		:	doGetEventsByGroupId();
+											break;
 
-		case		'updateprofile'	:	doUpdateProfile();
-										break;
+		case		'createevent'		:	doCreateEvent();
+											break;
 
-		case		'changepassword':	doChangePassword();
-										break;
+		case		'updateprofile'		:	doUpdateProfile();
+											break;
+
+		case		'changepassword'	:	doChangePassword();
+											break;
 		
-		default						:	out_json(['success' => false, 'message' => 'Invalid command!']);
-										break;
+		default							:	out_json(['success' => false, 'message' => 'Invalid command!']);
+											break;
 	}
 	
 	/*
@@ -411,6 +414,40 @@
 			':group_id' => $request['group_id'],
 			':event_name' => $request['event_name'],
 			':event_date' => $request['event_date']
+		]);
+		$result = $query->fetch(PDO::FETCH_ASSOC);
+		$result['success'] = ($result['success'] == '1' ? true : false);
+		$result['message'] = (!$result['success'] && $result['message'] == '' ? "An error occured!" : $result['message']);
+
+		$output = $result;
+
+		$query->nextRowset();
+		$result = $query->fetchAll(PDO::FETCH_ASSOC);
+
+		if (!empty($result)) {
+			$output['data'] =  $result;
+		} else {
+			$output['data'] = '';
+		}
+
+		$pdo = null;
+
+		out_json($output);
+	}
+
+	function doGetGroupDetails() {
+		global $request;
+
+		if ($request['group_id'] == '') {
+			out_json(['success' => false, 'data' => '', 'message' => 'Please specify the group id!']);
+		}
+
+		$pdo = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASS);
+		$query = $pdo->prepare('CALL spGetGroupDetails(:user_id, :login_session_id, :group_id);');
+		$query->execute([
+			':user_id' => $request['user_id'],
+			':login_session_id' => $request['login_session_id'],
+			':group_id' => $request['group_id']
 		]);
 		$result = $query->fetch(PDO::FETCH_ASSOC);
 		$result['success'] = ($result['success'] == '1' ? true : false);
