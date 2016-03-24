@@ -573,7 +573,8 @@ BEGIN
 				SELECT 'Default' as 'group_name';
 			ELSE
 				SELECT
-					group_name
+					group_name,
+					starred
 				FROM groups
 				WHERE groups.group_id = group_id
 					AND groups.user_id = user_id;
@@ -776,4 +777,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-03-24 17:00:56
+-- Dump completed on 2016-03-24 17:06:18
