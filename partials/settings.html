@@ -25,6 +25,9 @@
 						<div role="alert" class="alert alert-danger ng-hide" ng-show="updateProfileError">
 							{{ updateProfileError }}
 						</div>
+						<div role="alert" class="alert alert-success ng-hide" ng-show="updateProfileSuccess">
+							{{ updateProfileSuccess }}
+						</div>
 						<button class="btn btn-primary">Update Profile</button>
 					</fieldset>
 				</form>
@@ -53,6 +56,9 @@
 						</div>
 						<div role="alert" class="alert alert-danger ng-hide" ng-show="changePasswordError">
 							{{ changePasswordError }}
+						</div>
+						<div role="alert" class="alert alert-success ng-hide" ng-show="changePasswordSuccess">
+							{{ changePasswordSuccess }}
 						</div>
 						<button class="btn btn-primary">Change Password</button>
 					</fieldset>
