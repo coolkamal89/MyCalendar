@@ -48,6 +48,9 @@
 		case		'geteventsbyid'	:	doGetEventsByGroupId();
 										break;
 
+		case		'createevent'	:	doCreateEvent();
+										break;
+
 		case		'updateprofile'	:	doUpdateProfile();
 										break;
 
@@ -364,6 +367,50 @@
 			':user_id' => $request['user_id'],
 			':login_session_id' => $request['login_session_id'],
 			':group_id' => $request['group_id']
+		]);
+		$result = $query->fetch(PDO::FETCH_ASSOC);
+		$result['success'] = ($result['success'] == '1' ? true : false);
+		$result['message'] = (!$result['success'] && $result['message'] == '' ? "An error occured!" : $result['message']);
+
+		$output = $result;
+
+		$query->nextRowset();
+		$result = $query->fetchAll(PDO::FETCH_ASSOC);
+
+		if (!empty($result)) {
+			$output['data'] =  $result;
+		} else {
+			$output['data'] = '';
+		}
+
+		$pdo = null;
+
+		out_json($output);
+	}
+
+	function doCreateEvent() {
+		global $request;
+
+		if ($request['group_id'] == '') {
+			out_json(['success' => false, 'data' => '', 'message' => 'Please specify the group id!']);
+		}
+
+		if ($request['event_name'] == '') {
+			out_json(['success' => false, 'data' => '', 'message' => 'Please specify the event name!']);
+		}
+
+		if ($request['event_date'] == '') {
+			out_json(['success' => false, 'data' => '', 'message' => 'Please specify the event date!']);
+		}
+
+		$pdo = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASS);
+		$query = $pdo->prepare('CALL spCreateGroup(:user_id, :login_session_id, :group_id, :event_name, :event_date);');
+		$query->execute([
+			':user_id' => $request['user_id'],
+			':login_session_id' => $request['login_session_id'],
+			':group_id' => $request['group_id'],
+			':event_name' => $request['event_name'],
+			':event_date' => $request['event_date']
 		]);
 		$result = $query->fetch(PDO::FETCH_ASSOC);
 		$result['success'] = ($result['success'] == '1' ? true : false);
