@@ -59,6 +59,9 @@
 
 		case		'changepassword'	:	doChangePassword();
 											break;
+
+		case 		'editevent'			:	doEditEvent();
+											break;
 		
 		default							:	out_json(['success' => false, 'message' => 'Invalid command!']);
 											break;
@@ -457,6 +460,42 @@
 
 		$query->nextRowset();
 		$result = $query->fetch(PDO::FETCH_ASSOC);
+
+		if (!empty($result)) {
+			$output['data'] =  $result;
+		} else {
+			$output['data'] = '';
+		}
+
+		$pdo = null;
+
+		out_json($output);
+	}
+
+	function doEditEvent() {
+		global $request;
+
+		if ($request['event_id'] == '') {
+			out_json(['success' => false, 'data' => '', 'message' => 'Please specify the event id!']);
+		}
+
+		$pdo = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASS);
+		$query = $pdo->prepare('CALL spEditEvent(:user_id, :login_session_id, :group_id, :group_name, :group_star);');
+		$query->execute([
+			':user_id' => $request['user_id'],
+			':login_session_id' => $request['login_session_id'],
+			':group_id' => $request['group_id'],
+			':group_name' => $request['group_name'],
+			':group_star' => $request['group_star']
+		]);
+		$result = $query->fetch(PDO::FETCH_ASSOC);
+		$result['success'] = ($result['success'] == '1' ? true : false);
+		$result['message'] = (!$result['success'] && $result['message'] == '' ? "An error occured!" : $result['message']);
+
+		$output = $result;
+
+		$query->nextRowset();
+		$result = $query->fetchAll(PDO::FETCH_ASSOC);
 
 		if (!empty($result)) {
 			$output['data'] =  $result;
